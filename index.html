@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Investimentos - R$ 1 Milhão</title>
+    <title>Simulador de Investimentos</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -11,152 +11,241 @@
     <div class="container">
         <header class="header">
             <h1>Simulador de Investimentos</h1>
-            <p>Planeje seu caminho para <strong>R$ 1.000.000</strong></p>
+            <p class="subtitle">Planeje seu futuro financeiro com análises detalhadas</p>
         </header>
 
-        <!-- Input Controls -->
-        <section class="controls-section">
-            <h2>Parâmetros de Investimento</h2>
-            <div class="controls-grid">
-                <div class="control-group">
-                    <label class="form-label">Valor Inicial Investido</label>
-                    <div class="slider-container">
-                        <input type="range" id="initialInvestmentSlider" min="0" max="500000" step="1000" value="10000" class="slider">
-                        <div class="input-with-currency">
-                            <span class="currency-symbol">R$</span>
-                            <input type="number" id="initialInvestmentInput" min="0" max="500000" step="1000" value="10000" class="form-control number-input">
+        <div class="main-layout">
+            <!-- Input Section -->
+            <aside class="input-section">
+                <div class="card">
+                    <div class="card__body">
+                        <h2 class="section-title">Parâmetros</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="initialInvestment">
+                                Investimento Inicial
+                                <span class="tooltip" title="Valor que você já possui para investir">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                </span>
+                            </label>
+                            <input type="number" id="initialInvestment" class="form-control" value="10000" min="0" step="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="targetValue">
+                                Valor Desejado
+                                <span class="tooltip" title="Meta financeira que deseja alcançar">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                </span>
+                            </label>
+                            <input type="number" id="targetValue" class="form-control" value="100000" min="0" step="1000">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="annualReturn">
+                                Rentabilidade Anual (%)
+                                <span class="tooltip" title="Taxa de retorno esperada por ano">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                </span>
+                            </label>
+                            <input type="number" id="annualReturn" class="form-control" value="10" min="0" max="100" step="0.1">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="monthlyContribution">
+                                Aporte Mensal
+                                <span class="tooltip" title="Valor que você investirá mensalmente">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                </span>
+                            </label>
+                            <input type="number" id="monthlyContribution" class="form-control" value="500" min="0" step="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="investmentPeriod">
+                                Período (anos): <span id="periodValue">10</span>
+                            </label>
+                            <input type="range" id="investmentPeriod" class="slider" value="10" min="1" max="40" step="1">
+                            <div class="slider-labels">
+                                <span>1</span>
+                                <span>40</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn--primary btn--full-width" id="calculateBtn">
+                            Calcular Investimento
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Metrics -->
+                <div class="card" style="margin-top: 16px;">
+                    <div class="card__body">
+                        <h3 class="section-title">Resumo Rápido</h3>
+                        <div class="quick-metrics">
+                            <div class="metric-item">
+                                <div class="metric-label">Valor Final</div>
+                                <div class="metric-value" id="quickFinalValue">-</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Total Investido</div>
+                                <div class="metric-value" id="quickTotalInvested">-</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Retorno Total</div>
+                                <div class="metric-value success" id="quickTotalReturn">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Results Section -->
+            <main class="results-section">
+                <!-- Target Achievement Status -->
+                <div class="card status-card" id="statusCard">
+                    <div class="card__body">
+                        <div class="status-content">
+                            <div class="status-icon" id="statusIcon"></div>
+                            <div>
+                                <h3 id="statusTitle">Calculando...</h3>
+                                <p id="statusMessage">Ajuste os parâmetros e clique em calcular</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="control-group">
-                    <label class="form-label">Rentabilidade Anual</label>
-                    <div class="slider-container">
-                        <input type="range" id="annualRateSlider" min="0" max="30" step="0.5" value="10" class="slider">
-                        <div class="input-with-percent">
-                            <input type="number" id="annualRateInput" min="0" max="30" step="0.5" value="10" class="form-control number-input">
-                            <span class="percent-symbol">%</span>
+                <!-- Key Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="card metric-card">
+                        <div class="card__body">
+                            <div class="metric-icon" style="background: var(--color-bg-1);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                            <div class="metric-label">Patrimônio Final</div>
+                            <div class="metric-value" id="finalValue">-</div>
+                            <div class="metric-change" id="finalValueChange">-</div>
+                        </div>
+                    </div>
+
+                    <div class="card metric-card">
+                        <div class="card__body">
+                            <div class="metric-icon" style="background: var(--color-bg-3);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                            </div>
+                            <div class="metric-label">Total de Aportes</div>
+                            <div class="metric-value" id="totalContributions">-</div>
+                            <div class="metric-change" id="contributionsDetail">-</div>
+                        </div>
+                    </div>
+
+                    <div class="card metric-card">
+                        <div class="card__body">
+                            <div class="metric-icon" style="background: var(--color-bg-5);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+                            </div>
+                            <div class="metric-label">Rendimento Total</div>
+                            <div class="metric-value success" id="totalReturns">-</div>
+                            <div class="metric-change" id="returnsPercentage">-</div>
+                        </div>
+                    </div>
+
+                    <div class="card metric-card">
+                        <div class="card__body">
+                            <div class="metric-icon" style="background: var(--color-bg-6);">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <div class="metric-label">Tempo para Meta</div>
+                            <div class="metric-value" id="timeToTarget">-</div>
+                            <div class="metric-change" id="timeDetail">-</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="control-group">
-                    <label class="form-label">Aporte Mensal</label>
-                    <div class="slider-container">
-                        <input type="range" id="monthlyContributionSlider" min="0" max="50000" step="100" value="1000" class="slider">
-                        <div class="input-with-currency">
-                            <span class="currency-symbol">R$</span>
-                            <input type="number" id="monthlyContributionInput" min="0" max="50000" step="100" value="1000" class="form-control number-input">
+                <!-- Main Chart - Portfolio Evolution -->
+                <div class="card chart-card">
+                    <div class="card__body">
+                        <h3 class="section-title">Evolução do Patrimônio</h3>
+                        <div class="chart-container">
+                            <canvas id="evolutionChart"></canvas>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="reset-button-container">
-                <button id="resetButton" class="btn btn--secondary">Restaurar Valores Padrão</button>
-            </div>
-        </section>
 
-        <!-- Goal Achievement Banner -->
-        <section class="goal-banner">
-            <div class="goal-content">
-                <h3 id="timeToGoal">Carregando...</h3>
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div id="progressFill" class="progress-fill"></div>
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="card chart-card">
+                        <div class="card__body">
+                            <h3 class="section-title">Composição do Patrimônio</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="compositionChart"></canvas>
+                            </div>
+                        </div>
                     </div>
-                    <span id="progressText" class="progress-text">0%</span>
-                </div>
-            </div>
-        </section>
 
-        <!-- Main Chart -->
-        <section class="chart-section">
-            <div class="chart-header">
-                <h3>Evolução do Patrimônio</h3>
-                <div class="chart-controls">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="logScale" class="checkbox">
-                        Escala Logarítmica
-                    </label>
-                </div>
-            </div>
-            <div class="chart-container">
-                <canvas id="portfolioChart"></canvas>
-            </div>
-        </section>
-
-        <!-- Metrics Dashboard -->
-        <section class="metrics-section">
-            <h3>Resumo Financeiro</h3>
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Total Investido</div>
-                    <div id="totalInvested" class="metric-value">R$ 0</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Rendimento Total</div>
-                    <div id="totalReturns" class="metric-value">R$ 0</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Valor Final</div>
-                    <div id="finalValue" class="metric-value">R$ 0</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Rentabilidade Real</div>
-                    <div id="realReturn" class="metric-value">0%</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Múltiplo do Capital</div>
-                    <div id="capitalMultiple" class="metric-value">0x</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Composition Chart -->
-        <section class="composition-section">
-            <h3>Composição do Patrimônio</h3>
-            <div class="composition-container">
-                <div class="pie-chart-container">
-                    <canvas id="compositionChart"></canvas>
-                </div>
-                <div class="composition-legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #10b981;"></div>
-                        <span>Valor Inicial</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #2563eb;"></div>
-                        <span>Aportes Mensais</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #f59e0b;"></div>
-                        <span>Rendimentos</span>
+                    <div class="card chart-card">
+                        <div class="card__body">
+                            <h3 class="section-title">Crescimento Anual</h3>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="annualGrowthChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Yearly Breakdown Table -->
-        <section class="table-section">
-            <h3>Evolução Anual Detalhada</h3>
-            <div class="table-container">
-                <table class="breakdown-table">
-                    <thead>
-                        <tr>
-                            <th>Ano</th>
-                            <th>Saldo Inicial</th>
-                            <th>Aportes do Ano</th>
-                            <th>Rendimento do Ano</th>
-                            <th>Saldo Final</th>
-                        </tr>
-                    </thead>
-                    <tbody id="breakdownTableBody">
-                        <!-- Table rows will be generated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+                <!-- Additional Analysis -->
+                <div class="card">
+                    <div class="card__body">
+                        <h3 class="section-title">Análise Detalhada</h3>
+                        <div class="analysis-grid">
+                            <div class="analysis-item">
+                                <div class="analysis-label">Taxa Efetiva Anual</div>
+                                <div class="analysis-value" id="effectiveRate">-</div>
+                            </div>
+                            <div class="analysis-item">
+                                <div class="analysis-label">Crescimento Médio Mensal</div>
+                                <div class="analysis-value" id="monthlyGrowth">-</div>
+                            </div>
+                            <div class="analysis-item">
+                                <div class="analysis-label">Retorno sobre Investimento</div>
+                                <div class="analysis-value" id="roi">-</div>
+                            </div>
+                            <div class="analysis-item">
+                                <div class="analysis-label">Multiplicador do Capital</div>
+                                <div class="analysis-value" id="capitalMultiplier">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 
     <script src="app.js"></script>

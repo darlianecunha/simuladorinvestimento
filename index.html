@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Investimentos - R$ 1 Milhão</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Simulador de Investimentos - R$ 1 Milhão</h1>
+  <div class="controls">
+    <label>Valor Inicial (R$):
+      <input type="range" id="initialInvestmentSlider" min="0" max="500000" step="1000" value="10000">
+      <input type="number" id="initialInvestmentInput" value="10000">
+    </label>
+    <label>Rentabilidade Anual (%):
+      <input type="range" id="annualRateSlider" min="0" max="30" step="0.5" value="10">
+      <input type="number" id="annualRateInput" value="10">
+    </label>
+    <label>Aporte Mensal (R$):
+      <input type="range" id="monthlyContributionSlider" min="0" max="50000" step="100" value="1000">
+      <input type="number" id="monthlyContributionInput" value="1000">
+    </label>
+    <button id="resetButton">Redefinir</button>
+    <label><input type="checkbox" id="logScale"> Escala Logarítmica</label>
+  </div>
+  <div class="metrics">
+    <p>Tempo para R$ 1 Milhão: <span id="timeToGoal">--</span></p>
+    <p>Total Investido: <span id="totalInvested">--</span></p>
+    <p>Rendimento Total: <span id="totalReturns">--</span></p>
+    <p>Valor Final: <span id="finalValue">--</span></p>
+  </div>
+  <canvas id="portfolioChart"></canvas>
+  <script src="script.js"></script>
+</body>
+</html>

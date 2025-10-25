@@ -1,97 +1,164 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulador de Investimentos</title>
-
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Investimentos - R$ 1 Milhão</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <header class="app-header">
-    <h1>Simulador de Investimentos</h1>
-    <p>Projete quanto tempo leva para atingir sua meta financeira.</p>
-  </header>
+    <div class="container">
+        <header class="header">
+            <h1>Simulador de Investimentos</h1>
+            <p>Planeje seu caminho para <strong>R$ 1.000.000</strong></p>
+        </header>
 
-  <main class="app-shell">
-    <section class="card form-card">
-      <h2>Parâmetros</h2>
+        <!-- Input Controls -->
+        <section class="controls-section">
+            <h2>Parâmetros de Investimento</h2>
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label class="form-label">Valor Inicial Investido</label>
+                    <div class="slider-container">
+                        <input type="range" id="initialInvestmentSlider" min="0" max="500000" step="1000" value="10000" class="slider">
+                        <div class="input-with-currency">
+                            <span class="currency-symbol">R$</span>
+                            <input type="number" id="initialInvestmentInput" min="0" max="500000" step="1000" value="10000" class="form-control number-input">
+                        </div>
+                    </div>
+                </div>
 
-      <div class="form-group">
-        <label for="initialInvestmentInput">Valor inicial</label>
-        <input id="initialInvestmentInput" type="number" min="0" step="100" value="10000">
-      </div>
+                <div class="control-group">
+                    <label class="form-label">Rentabilidade Anual</label>
+                    <div class="slider-container">
+                        <input type="range" id="annualRateSlider" min="0" max="30" step="0.5" value="10" class="slider">
+                        <div class="input-with-percent">
+                            <input type="number" id="annualRateInput" min="0" max="30" step="0.5" value="10" class="form-control number-input">
+                            <span class="percent-symbol">%</span>
+                        </div>
+                    </div>
+                </div>
 
-      <div class="form-group">
-        <label for="monthlyContributionInput">Aporte mensal</label>
-        <input id="monthlyContributionInput" type="number" min="0" step="100" value="1000">
-      </div>
+                <div class="control-group">
+                    <label class="form-label">Aporte Mensal</label>
+                    <div class="slider-container">
+                        <input type="range" id="monthlyContributionSlider" min="0" max="50000" step="100" value="1000" class="slider">
+                        <div class="input-with-currency">
+                            <span class="currency-symbol">R$</span>
+                            <input type="number" id="monthlyContributionInput" min="0" max="50000" step="100" value="1000" class="form-control number-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reset-button-container">
+                <button id="resetButton" class="btn btn--secondary">Restaurar Valores Padrão</button>
+            </div>
+        </section>
 
-      <div class="form-group">
-        <label for="annualRateInput">Rentabilidade anual (% a.a.)</label>
-        <input id="annualRateInput" type="number" min="0" step="0.1" value="10">
-        <small>Ex.: 10 = aproximadamente 0,8% ao mês</small>
-      </div>
+        <!-- Goal Achievement Banner -->
+        <section class="goal-banner">
+            <div class="goal-content">
+                <h3 id="timeToGoal">Carregando...</h3>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <span id="progressText" class="progress-text">0%</span>
+                </div>
+            </div>
+        </section>
 
-      <div class="form-group">
-        <label for="targetGoalInput">Meta desejada</label>
-        <input id="targetGoalInput" type="number" min="0" step="1000" value="1000000">
-        <small>Valor alvo que você quer alcançar</small>
-      </div>
+        <!-- Main Chart -->
+        <section class="chart-section">
+            <div class="chart-header">
+                <h3>Evolução do Patrimônio</h3>
+                <div class="chart-controls">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="logScale" class="checkbox">
+                        Escala Logarítmica
+                    </label>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="portfolioChart"></canvas>
+            </div>
+        </section>
 
-      <div class="row-inline">
-        <button id="resetButton" class="btn-primary">Redefinir</button>
+        <!-- Metrics Dashboard -->
+        <section class="metrics-section">
+            <h3>Resumo Financeiro</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Total Investido</div>
+                    <div id="totalInvested" class="metric-value">R$ 0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Rendimento Total</div>
+                    <div id="totalReturns" class="metric-value">R$ 0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Valor Final</div>
+                    <div id="finalValue" class="metric-value">R$ 0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Rentabilidade Real</div>
+                    <div id="realReturn" class="metric-value">0%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Múltiplo do Capital</div>
+                    <div id="capitalMultiple" class="metric-value">0x</div>
+                </div>
+            </div>
+        </section>
 
-        <label class="logscale-toggle">
-          <input type="checkbox" id="logScale">
-          Escala logarítmica do gráfico
-        </label>
-      </div>
-    </section>
+        <!-- Composition Chart -->
+        <section class="composition-section">
+            <h3>Composição do Patrimônio</h3>
+            <div class="composition-container">
+                <div class="pie-chart-container">
+                    <canvas id="compositionChart"></canvas>
+                </div>
+                <div class="composition-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #10b981;"></div>
+                        <span>Valor Inicial</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #2563eb;"></div>
+                        <span>Aportes Mensais</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f59e0b;"></div>
+                        <span>Rendimentos</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <section class="card result-card">
-      <h2>Resultados</h2>
+        <!-- Yearly Breakdown Table -->
+        <section class="table-section">
+            <h3>Evolução Anual Detalhada</h3>
+            <div class="table-container">
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>Ano</th>
+                            <th>Saldo Inicial</th>
+                            <th>Aportes do Ano</th>
+                            <th>Rendimento do Ano</th>
+                            <th>Saldo Final</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdownTableBody">
+                        <!-- Table rows will be generated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
 
-      <div class="result-grid">
-        <div class="result-box">
-          <span class="label">Tempo até a meta</span>
-          <span class="value" id="timeToGoal">--</span>
-        </div>
-
-        <div class="result-box">
-          <span class="label">Total investido</span>
-          <span class="value" id="totalInvested">--</span>
-        </div>
-
-        <div class="result-box">
-          <span class="label">Rendimento total</span>
-          <span class="value" id="totalReturns">--</span>
-        </div>
-
-        <div class="result-box">
-          <span class="label">Valor final projetado</span>
-          <span class="value highlight" id="finalValue">--</span>
-        </div>
-      </div>
-
-      <div class="chart-wrapper">
-        <canvas id="portfolioChart" aria-label="Evolução do valor total" role="img"></canvas>
-      </div>
-
-      <div class="obs-box">
-        <p>
-          Simulação ilustrativa. Não considera impostos, inflação, taxas,
-          risco de mercado, nem mudanças de rentabilidade ao longo do tempo.
-        </p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="app-footer">
-    <p>Ferramenta educativa.</p>
-  </footer>
-
-  <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
